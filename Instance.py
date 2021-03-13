@@ -22,7 +22,7 @@ class Instance:
 
     def task_with_machine(self, job, wanted_machine):
         for task in range(self.numTasks):
-            if self.machine(job, task) == wanted_machine:
+            if self.machine(job=job, task=task) == wanted_machine:
                 return task
         print(f"No task targeting machine {wanted_machine} on job {job}")
         return None
