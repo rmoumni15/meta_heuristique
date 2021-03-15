@@ -20,7 +20,7 @@ class Schedule:
 
     def startTime(self, job, task=None):
         if task is None:
-            return self.startTime(task.job, task.task)
+            return self.startTime(job=task.job,task= task.task)
         else:
             return self.times[job][task]
 
@@ -58,7 +58,7 @@ class Schedule:
         return max_
 
     def endTime(self, task: Task) -> int:
-        return self.startTime(task) + self.pb.duration(task.job, task.task)
+        return self.startTime(task) + self.pb.duration(job=task.job,task= task.task)
 
     def isCriticalPath(self, path: List[Task]) -> bool:
         if self.startTime(path[0]) != 0:
@@ -72,31 +72,31 @@ class Schedule:
 
     def criticalPath(self) -> List[Task]:
         ldd: Task
-        tmp = [Task(j, self.pb.numTasks - 1) for j in range(self.pb.numJobs)]
-        ldd = max(sorted(tmp, key=lambda x: self.endTime(x), reverse=True))
-        assert self.endTime(ldd) == self.makespan()
+        tmp = [Task(job=j, task= self.pb.numTasks - 1) for j in range(self.pb.numJobs)]
+        ldd = max(sorted(tmp, key=lambda x: self.endTime(task=x), reverse=True))
+        assert self.endTime(task=ldd) == self.makespan()
 
         path: List[Task]
         path.insert(0, ldd)
 
-        while self.startTime(path[0]) != 0:
+        while self.startTime(task=path[0]) != 0:
             cur: Task = path[0]
-            machine: int = self.pb.machine(cur.job, cur.task)
+            machine: int = self.pb.machine(job=cur.job,task= cur.task)
 
             latestPredecessor = None
 
             if cur.task > 0:
-                predOnJob: Task = Task(cur.job, cur.task - 1)
+                predOnJob: Task = Task(job=cur.job,task= cur.task - 1)
 
-                if self.endTime(predOnJob) == self.startTime(cur):
+                if self.endTime(task=predOnJob) == self.startTime(task=cur):
                     latestPredecessor = predOnJob
             if (latestPredecessor is None):
-                latestPredecessor = [Task(j, self.pb.task_with_machine(j, machine)) for j in range(self.pb.numJobs)]
+                latestPredecessor = [Task(j, self.pb.task_with_machine(job=j,wanted_machine= machine)) for j in range(self.pb.numJobs)]
                 latestPredecessor = list(
-                    filter(lambda elem: self.endTime(elem) == self.startTime(cur), latestPredecessor))
+                    filter(lambda elem: self.endTime(task=elem) == self.startTime(cur), latestPredecessor))
                 latestPredecessor = latestPredecessor[0]
 
-            assert latestPredecessor is not None and self.endTime(latestPredecessor) == self.startTime(cur)
+            assert latestPredecessor is not None and self.endTime(task=latestPredecessor) == self.startTime(task=cur)
 
             path.insert(0, latestPredecessor)
         assert self.isCriticalPath(path)

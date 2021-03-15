@@ -87,3 +87,5 @@ class RessourceOrder:
                 string += str(self.tasksByMachine[m][j].toString()) + ' ; '
             string += "\n"
         return str(string)
+
+

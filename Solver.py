@@ -55,13 +55,6 @@ def solve_greedySPT(instance: Instance, deadline: float = 0) -> Result:
     job_sorted_ = [item.job for sublist in job_sorted for item in sublist]
     # print(job_sorted_)
     sol.jobs = job_sorted_
-    sch = sol.toSchedule()
-    for i in range(len(job_sorted)):
-        job_sorted[i] = list(sorted(job_sorted[i], key=lambda x: sch.endTime(task=x)))
-    job_sorted_ = [item.job for sublist in job_sorted for item in sublist]
-    # print(job_sorted_)
-    sol.jobs = job_sorted_
-
     sol.nextToSet = len(sol.jobs)
 
     return Result(instance, sol.toSchedule(), Result.ExitCause.Blocked)
