@@ -1,9 +1,9 @@
 ## meta-heuristique
-####preparé par :
+#### preparé par :
 <ul>
 <li> <b> Rida Moumni </b></li> 
-<li><b> Waffa Pagou Brondon </li> 
-<li> Alfousseyni Keita </li> </b>
+<li><b> Waffa Pagou Brondon </b></li> 
+<li><b> Alfousseyni Keita </b> </li>
 </ul>
 
 #### Execution :
