@@ -1,9 +1,9 @@
 from typing import List
 
-from Instance import Instance
-from JobNumbers import JobNumbers
-from Result import Result
-from Task import Task
+from utils.Instance import Instance
+from utils.JobNumbers import JobNumbers
+from utils.Result import Result
+from utils.Task import Task
 
 
 def solve(instance: Instance, deadline: float = 0) -> Result:

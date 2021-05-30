@@ -1,8 +1,8 @@
 from typing import List, Union
 
-from Instance import Instance
-from Schedule import Schedule
-from Task import Task
+from utils.Instance import Instance
+from utils.Schedule import Schedule
+from utils.Task import Task
 
 
 class JobNumbers:

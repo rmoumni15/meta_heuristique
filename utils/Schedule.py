@@ -1,9 +1,8 @@
-from typing import List, Union
+from typing import List
 
-from Instance import Instance
-import numpy as np
+from utils.Instance import Instance
 
-from Task import Task
+from utils.Task import Task
 
 
 class Schedule:
@@ -18,8 +17,8 @@ class Schedule:
                 siz = [0 for i in range(len(times[i]) - pb.numTasks)]
                 self.times[i] += siz
 
-    def startTime(self, job, task=None):
-        if task is None:
+    def startTime(self,task, job=None):
+        if job is None:
             return self.startTime(job=task.job,task= task.task)
         else:
             return self.times[job][task]
@@ -28,21 +27,21 @@ class Schedule:
 
         for j in range(self.pb.numJobs):
             for t in range(1, self.pb.numTasks):
-                if self.startTime(j, t - 1) + self.pb.duration(j, t - 1) > self.startTime(j, t):
+                if self.startTime(job=j,task= t - 1) + self.pb.duration(job=j, task= t - 1) > self.startTime(job=j, task= t):
                     return False
 
             for t in range(self.pb.numTasks):
-                if self.startTime(j, t) < 0:
+                if self.startTime(job=j, task= t) < 0:
                     return False
 
-        for machine in range(self.pb.machines):
+        for machine in range(self.pb.numMachines):
             for j1 in range(self.pb.numJobs):
-                t1 = self.pb.task_with_machine(j1, machine)
+                t1 = self.pb.task_with_machine(job=j1,wanted_machine= machine)
                 for j2 in range(j1 + 1, self.pb.numJobs):
-                    t2 = self.pb.task_with_machine(j2, machine)
+                    t2 = self.pb.task_with_machine(job=j2, wanted_machine= machine)
 
-                    t1_first: bool = self.startTime(j1, t1) + self.pb.duration(j1, t1) <= self.startTime(j2, t2)
-                    t2_first: bool = self.startTime(j2, t2) + self.pb.duration(j2, t2) <= self.startTime(j1, t1)
+                    t1_first: bool = self.startTime(job=j1,task= t1) + self.pb.duration(job=j1, task= t1) <= self.startTime(job=j2, task=t2)
+                    t2_first: bool = self.startTime(job=j2, task= t2) + self.pb.duration(job=j2, task= t2) <= self.startTime(job=j1, task= t1)
 
                     if t1_first is False and t2_first is False:
                         return False
@@ -58,7 +57,7 @@ class Schedule:
         return max_
 
     def endTime(self, task: Task) -> int:
-        return self.startTime(task) + self.pb.duration(job=task.job,task= task.task)
+        return self.startTime(task=task) + self.pb.duration(job=task.job,task= task.task)
 
     def isCriticalPath(self, path: List[Task]) -> bool:
         if self.startTime(path[0]) != 0:
@@ -73,10 +72,13 @@ class Schedule:
     def criticalPath(self) -> List[Task]:
         ldd: Task
         tmp = [Task(job=j, task= self.pb.numTasks - 1) for j in range(self.pb.numJobs)]
-        ldd = max(sorted(tmp, key=lambda x: self.endTime(task=x), reverse=True))
+        tmp_sorted = [(i,self.endTime(task=tmp[i])) for i in range(len(tmp))]
+        tmp_sorted = max(list(sorted(tmp_sorted, key=lambda x: x[1], reverse= True)), key=lambda x: x[1])
+        #print(tmp_sorted)
+        ldd = tmp[tmp_sorted[0]]
         assert self.endTime(task=ldd) == self.makespan()
 
-        path: List[Task]
+        path: List[Task] = []
         path.insert(0, ldd)
 
         while self.startTime(task=path[0]) != 0:

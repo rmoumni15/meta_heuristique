@@ -1,10 +1,9 @@
 from typing import Union, Optional
 
-from Instance import Instance
-from Schedule import Schedule
-from pyxtension.streams import stream
+from utils.Instance import Instance
+from utils.Schedule import Schedule
 
-from Task import Task
+from utils.Task import Task
 
 
 class RessourceOrder:
@@ -30,7 +29,7 @@ class RessourceOrder:
                 self.tasksByMachine[m] = [Task(job=j, task=pb.task_with_machine(job=j, wanted_machine=machine)) for j in
                                           range(pb.numJobs)]
                 self.tasksByMachine[m] = list(
-                    sorted(self.tasksByMachine[m], key=lambda t: instance.startTime(t.job, t.task)))
+                    sorted(self.tasksByMachine[m], key=lambda t: instance.startTime(job=t.job,  task=t.task)))
 
                 self.nextFreeSlot[m] = self.instance.numJobs
 
